@@ -1,6 +1,6 @@
 import Header from './layouts/Header';
 import Instructions from './layouts/Instructions';
-import GenerateCommand from './components/generateCommand';
+import GenerateCommand from './components/GenerateCommand';
 import InputWorkSpace from './components/InputWorkSpace';
 import OptionResult from './components/OptionResult';
 
