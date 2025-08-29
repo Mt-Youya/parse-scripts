@@ -165,17 +165,25 @@ export default function JSONComparer() {
         <div className="p-4">
             <h1 className="text-xl font-bold mb-4">JSON 对比工具</h1>
             <Button asChild className="mb-4">
-                <Link replace to="/" className="relative pb-1 text-[#0009] bg-size-[0_2px] bg-linear-to-r[#92db72_#90ff00] transition-all duration-300 ease-in-out bg-bottom bg-right bg-no-repeat hover:bg-size-[100%_2px] hover:bg-left hover:bg-bottom"> Back Home </Link>
+                <Link
+                    replace to="/"
+                    className="relative pb-1 text-[#0009] bg-size-[0_2px] bg-linear-to-r[#92db72_#90ff00] transition-all duration-300 ease-in-out bg-bottom bg-right bg-no-repeat hover:bg-size-[100%_2px] hover:bg-left hover:bg-bottom"
+                >
+                    Back Home
+                </Link>
             </Button>
-            {jsonInputs.map((input, index) => (
-                <Textarea
-                    key={index}
-                    value={input}
-                    onChange={(e) => handleChange(index, e.target.value)}
-                    className="border w-full h-24 mb-2 p-2"
-                    placeholder={`输入 JSON ${index + 1}`}
-                />
-            ))}
+            <div className="grid-cols-2 grid-cols-3 grid-cols-4"/>
+            <div className={`grid grid-cols-${jsonInputs.length > 4 ? 4 : jsonInputs.length || 4}`}>
+                {jsonInputs.map((input, index) => (
+                    <Textarea
+                        key={index}
+                        value={input}
+                        onChange={(e) => handleChange(index, e.target.value)}
+                        className="border w-full h-24 mb-2 p-2"
+                        placeholder={`输入 JSON ${index + 1}`}
+                    />
+                ))}
+            </div>
             <Button onClick={addInput}>添加 JSON</Button> &emsp;
             <Button onClick={handleCompare} disabled={loading}>
                 {loading && <Loader2Icon className="animate-spin" />} 对比
