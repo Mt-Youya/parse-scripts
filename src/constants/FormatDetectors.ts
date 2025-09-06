@@ -1,4 +1,3 @@
-
 export const FormatDetectors = [
     { name: "冒号分隔格式", format: 'colonSeparated', detector: /^[^:]+:\s*[^\n]/m },
     { name: "JSON格式", format: 'json', detector: /"[\w]+"\s*:/ },
@@ -13,6 +12,7 @@ export const FormatDetectors = [
     { name: "INI文件格式", format: 'ini', detector: /^\[[^\]]+\]$/m },
     { name: "格命令行参数格式式", format: 'commandLine', detector: /(?:--[\w-]+\s|--[\w-]+=|-[a-zA-Z]\s)/ },
     { name: "环境变量格式", format: 'env', detector: /^[A-Z_][A-Z0-9_]*\s*=/m },
-];
+    { name: "去除行号格式", format: 'dropLineNumber', detector: /^\d+\s*/gm },
+] as const;
 
 export type FormatDetectorsType = typeof FormatDetectors

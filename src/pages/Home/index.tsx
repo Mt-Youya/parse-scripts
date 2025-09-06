@@ -1,9 +1,9 @@
+import { Link } from "react-router-dom"
 import { Button } from '@/ui/button'
 import GenerateCommand from './components/GenerateCommand'
 import InputWorkSpace from './components/InputWorkSpace'
 import OptionResult from './components/OptionResult'
 import Main from '@/layouts/Main'
-import { Link } from "react-router-dom"
 
 function Home() {
     return (

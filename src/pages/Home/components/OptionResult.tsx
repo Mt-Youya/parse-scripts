@@ -1,5 +1,5 @@
 import { AlertCircle, Settings } from 'lucide-react';
-import { isEmpty, isObject } from "lodash-es"
+import { isEmpty } from "lodash-es"
 import { CommandStore } from '@/stores/command';
 import { Card, CardHeader, CardTitle, CardContent } from '@/ui/card';
 import { Badge } from '@/ui/badge';
@@ -53,7 +53,7 @@ function OptionResult() {
                 <Separator />
 
                 <div className="space-y-2">
-                    <Label> 使用的解析器</Label>
+                    <Label> 使用的解析器 </Label>
                     <ul className='grid grid-cols-2'>
                         {detectors.map(({ name, format, checked }, idx) => (
                             <li key={idx + name} className='flex flex-start gap-2 space-y-1'>
@@ -85,7 +85,7 @@ function OptionResult() {
                                                 {key}
                                             </Badge>
                                             <code className="text-slate-800 bg-slate-100 px-2 py-1 rounded text-sm">
-                                                {value}
+                                                {JSON.stringify(value)}
                                             </code>
                                         </div>
                                     ))}

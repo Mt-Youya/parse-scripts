@@ -1,14 +1,16 @@
-import {FormatDetectors} from "@/constants/FormatDetectors";
-import {isJSON} from "./is";
-import {Arrow} from "@radix-ui/react-tooltip";
-import {isPlainObject} from "lodash-es";
+import { isJSON } from "./is";
+import { FormatDetectors, type FormatDetectorsType } from "@/constants/FormatDetectors";
+import type { Writeable } from "@/types/utils";
 
 interface ParsedResult {
     [key: string]: any;
 }
 
 function parseValue(value: string) {
-    switch (value) {
+    if (value.startsWith('"') && value.endsWith('"')) {
+        value = value.slice(1, -1);
+    }
+    switch (value.trim()) {
         case '':
             return '';
         case 'true':
@@ -28,7 +30,7 @@ function parseValue(value: string) {
     }
 }
 
-function parseJSON(text: string): ParsedResult {
+function parseJSON(text: string) {
     const result: ParsedResult = {};
     const jsonPatterns = [
         /"([^"]+)"\s*:\s*"([^"]*)"/g,           // 字符串值
@@ -54,7 +56,7 @@ function parseJSON(text: string): ParsedResult {
     return result;
 }
 
-function parseKeyValue(text: string): ParsedResult {
+function parseKeyValue(text: string) {
     const result: ParsedResult = {};
     const keyValuePatterns = [
         /(\w+[\w\u4e00-\u9fa5]*)\s*[:=]\s*"([^"]*)"/g,  // 带引号的值
@@ -70,13 +72,13 @@ function parseKeyValue(text: string): ParsedResult {
 
             // 清理值并尝试转换类型
             value = value.replace(/^["']|["']$/g, '');
-            result[key] = parseValue(value).replaceAll(";", "");
+            result[key] = parseValue(value);
         }
     }
     return result;
 }
 
-function parseUrlParams(text: string): ParsedResult {
+function parseUrlParams(text: string) {
     const result: ParsedResult = {};
     const urlPattern = /[?&]([^=]+)=([^&]*)/g;
 
@@ -93,7 +95,7 @@ function parseUrlParams(text: string): ParsedResult {
     return result;
 }
 
-function parseNormal(text: string): ParsedResult {
+function parseNormal(text: string) {
     const result: ParsedResult = {};
     const simplePattern = /(\w+[\w\u4e00-\u9fa5]*)\s+([^=\s][^]*?)(?=\s+\w+|$)/g;
 
@@ -106,7 +108,7 @@ function parseNormal(text: string): ParsedResult {
     return result;
 }
 
-function parseXML(text: string): ParsedResult {
+function parseXML(text: string) {
     const result: ParsedResult = {};
     const xmlPattern = /(\w+)\s*=\s*"([^"]*)"/g;
 
@@ -119,7 +121,7 @@ function parseXML(text: string): ParsedResult {
     return result;
 }
 
-function parseColonSeparated(text: string): ParsedResult {
+function parseColonSeparated(text: string) {
     const result: ParsedResult = {};
     const colonPattern = /([^:\n]+):\s*([^\n]*)/g;
 
@@ -133,8 +135,7 @@ function parseColonSeparated(text: string): ParsedResult {
     }
     return result;
 }
-
-function parseTOML(text: string): ParsedResult {
+function parseTOML(text: string) {
     const result: ParsedResult = {};
     const tomlPatterns = [
         /^([\w]+)\s*=\s*"([^"]*)"$/gm,        // 字符串
@@ -148,10 +149,10 @@ function parseTOML(text: string): ParsedResult {
         let match;
         while ((match = pattern.exec(text)) !== null) {
             const key = match[1];
-            let value = match[2];
+            let value: any = match[2];
 
             if (pattern === tomlPatterns[4]) { // 数组处理
-                value = value.split(',').map(item => parseValue(item.trim()));
+                value = (value as string).split(',').map(item => parseValue(item.trim()));
             } else {
                 value = parseValue(value);
             }
@@ -163,7 +164,7 @@ function parseTOML(text: string): ParsedResult {
 }
 
 
-function parseYaml(text: string): ParsedResult {
+function parseYaml(text: string) {
     const result: ParsedResult = {};
     const yamlPatterns = [
         /^([\w]+):\s*"([^"]*)"$/gm,          // 带引号字符串
@@ -178,17 +179,16 @@ function parseYaml(text: string): ParsedResult {
         let match;
         while ((match = pattern.exec(text)) !== null) {
             const key = match[1];
-            let value = match[2].trim();
+            let value: any = match[2].trim();
 
             // 移除注释
             value = value.replace(/#.*$/, '').trim();
 
             if (pattern === yamlPatterns[4]) { // 数组处理
-                value = value.split(',').map(item => parseValue(item.trim()));
+                value = (value as string).split(',').map(item => parseValue(item.trim()));
             } else {
                 value = parseValue(value);
             }
-
             if (value !== '') {
                 result[key] = value;
             }
@@ -197,7 +197,7 @@ function parseYaml(text: string): ParsedResult {
     return result;
 }
 
-function parseHocon(text: string): ParsedResult {
+function parseHocon(text: string) {
     const result: ParsedResult = {};
     const hoconPatterns = [
         /([\w.]+)\s*[:=]\s*"([^"]*)"/g,      // 带引号字符串
@@ -212,12 +212,12 @@ function parseHocon(text: string): ParsedResult {
         let match;
         while ((match = pattern.exec(text)) !== null) {
             const key = match[1];
-            let value = match[2];
+            let value: any = match[2];
 
             if (pattern === hoconPatterns[4]) { // 数组
-                value = value.split(',').map(item => parseValue(item.trim()));
+                value = (value as string).split(',').map(item => parseValue(item.trim()));
             } else if (pattern === hoconPatterns[5]) { // 嵌套对象
-                value = parseTextData(value); // 递归解析
+                value = parseTextData(value, [FormatDetectors[9]]); // 递归解析
             } else {
                 value = parseValue(value);
             }
@@ -228,7 +228,7 @@ function parseHocon(text: string): ParsedResult {
     return result;
 }
 
-function parseJavaProperties(text: string): ParsedResult {
+function parseJavaProperties(text: string) {
     const result: ParsedResult = {};
     const propertiesPattern = /^([\w.]+)\s*[=:]\s*(.*)$/gm;
 
@@ -245,14 +245,14 @@ function parseJavaProperties(text: string): ParsedResult {
             .replace(/\\#/g, '#');
 
         // 移除行尾注释
-        value = value.replace(/\s*[#!].*$/, '').replaceAll(";", "");
+        value = value.replace(/\s*[#!].*$/, '');
 
         result[key] = parseValue(value);
     }
     return result;
 }
 
-function parseINI(text: string): ParsedResult {
+function parseINI(text: string) {
     const result: ParsedResult = {};
     let currentSection = 'global';
 
@@ -291,7 +291,7 @@ function parseINI(text: string): ParsedResult {
     return result;
 }
 
-function parseCommandLine(text: string): ParsedResult {
+function parseCommandLine(text: string) {
     const result: ParsedResult = {};
     const cliPatterns = [
         /--([\w-]+)\s+([^-\s][^]*?)(?=\s+--|$)/g,  // --key value
@@ -321,7 +321,7 @@ function parseCommandLine(text: string): ParsedResult {
     return result;
 }
 
-function parseENV(text: string): ParsedResult {
+function parseENV(text: string) {
     const result: ParsedResult = {};
     const envPattern = /^([A-Z_][A-Z0-9_]*)\s*=\s*(.*)$/gm;
 
@@ -336,6 +336,149 @@ function parseENV(text: string): ParsedResult {
         result[key] = parseValue(value);
     }
     return result;
+}
+
+function parseLineHead(text: string) {
+    const lines = text.replace(/"val_lab":/,"").split('\n');
+    const cleanString = lines.map(line => line.replace(/^\s*\d+\s*/, '')).join('\n');
+    return parseJsonObject(cleanString);
+}
+
+function parseJsonObject(text: string) {
+    const result: ParsedResult = {};
+    const lines = text.split('\n');
+    let i = 0;
+
+    while (i < lines.length) {
+        const line = lines[i].trim();
+        if (!line || line === '{' || line === '}' || line === '},') {
+            i++;
+            continue;
+        }
+
+        const keyValueMatch = line.match(/^"([^"]+)"\s*:\s*(.*)$/);
+        if (keyValueMatch) {
+            const key = keyValueMatch[1];
+            let valueStr = keyValueMatch[2]?.replace(/,$/, '');
+            if (valueStr === '{') {
+                const { value: objectValue, nextIndex } = parseNestedObject(lines, i + 1);
+                result[key] = objectValue;
+                i = nextIndex;
+            } else if (valueStr === '[') {
+                const { value: arrayValue, nextIndex } = parseNestedArray(lines, i + 1);
+                result[key] = arrayValue;
+                i = nextIndex;
+            } else if (valueStr.startsWith('{')) {
+                result[key] = isJSON(valueStr) ?? valueStr
+                i++;
+            } else if (valueStr.startsWith('[')) {
+                result[key] = isJSON(valueStr) ?? valueStr
+                i++;
+            } else {
+                result[key] = parseValue(valueStr);
+                i++;
+            }
+        }
+        i++;
+    }
+    return result;
+}
+
+function parseNestedObject(lines: string[], startIndex: number): { value: any, nextIndex: number } {
+    const result: ParsedResult = {};
+    let i = startIndex;
+    let braceCount = 1; // 已经遇到了开始的 {
+
+    while (i < lines.length && braceCount > 0) {
+        const line = lines[i].trim();
+        if (!line) {
+            i++;
+            continue;
+        }
+        // 计算花括号
+        const openBraces = (line.match(/\{/g) || []).length;
+        const closeBraces = (line.match(/\}/g) || []).length;
+
+        if (line === '}' || line === '},') {
+            braceCount--;
+            if (braceCount === 0) {
+                break;
+            }
+            i++;
+            continue;
+        }
+
+        // 匹配键值对
+        const keyValueMatch = line.match(/^"([^"]+)"\s*:\s*(.*)$/);
+
+        if (keyValueMatch) {
+            const key = keyValueMatch[1];
+            let valueStr = keyValueMatch[2]?.replace(/,$/, '');
+
+            if (valueStr === '{') {
+                braceCount++;
+                const { value: nestedValue, nextIndex } = parseNestedObject(lines, i + 1);
+                result[key] = nestedValue;
+                i = nextIndex;
+                braceCount--; // parseNestedObject 已经处理了对应的 }
+            } else if (valueStr === '[') {
+                const { value: arrayValue, nextIndex } = parseNestedArray(lines, i + 1);
+                result[key] = arrayValue;
+                i = nextIndex;
+            } else if (valueStr.startsWith('{')) {
+                // 单行对象
+                braceCount += openBraces - closeBraces;
+                result[key] = isJSON(valueStr) ?? valueStr
+            } else if (valueStr.startsWith('[')) {
+                // 单行数组
+                result[key] = isJSON(valueStr) ?? valueStr
+            } else {
+                // 基本类型
+                result[key] = parseValue(valueStr);
+            }
+        }
+        i++;
+    }
+    return { value: result, nextIndex: i + 1 };
+}
+
+function parseNestedArray(lines: string[], startIndex: number): { value: any[], nextIndex: number } {
+    const result: any[] = [];
+    let i = startIndex;
+    let bracketCount = 1; // 已经遇到了开始的 [
+    let currentArrayStr = '';
+
+    while (i < lines.length && bracketCount > 0) {
+        const line = lines[i].trim();
+
+        if (!line) {
+            i++;
+            continue;
+        }
+
+        currentArrayStr += line;
+
+        // 计算方括号
+        const openBrackets = (line.match(/\[/g) || []).length;
+        const closeBrackets = (line.match(/\]/g) || []).length;
+
+        bracketCount += openBrackets - closeBrackets;
+
+        if (bracketCount === 0) {
+            // 数组结束，尝试解析
+            try {
+                const parsed = JSON.parse('[' + currentArrayStr);
+                return { value: parsed, nextIndex: i + 1 };
+            } catch (error) {
+                console.error('数组解析失败:', error);
+                return { value: [currentArrayStr], nextIndex: i + 1 };
+            }
+        }
+
+        i++;
+    }
+
+    return { value: result, nextIndex: i };
 }
 
 const formatParsers = {
@@ -364,9 +507,10 @@ const formatParsers = {
     // 命令行参数格式: --key value 或 -k value
     commandLine: parseCommandLine,
     // 环境变量格式: KEY=VALUE
-    env: parseENV
+    env: parseENV,
+    // 去除行首格式
+    dropLineNumber: parseLineHead,
 };
-
 
 // 处理嵌套结构
 function processNestedStructures(obj: ParsedResult): void {
@@ -391,24 +535,11 @@ function processNestedStructures(obj: ParsedResult): void {
 }
 
 
-function replaceAllSemicolon(val: any) {
-    if (Array.isArray(val)) {
-        return val.map(item => replaceAllSemicolon(item));
-    }
-    if (isPlainObject(val)) {
-        return Object.keys(val).reduce((prev, k) => {
-            prev[k] = replaceAllSemicolon(val[k])
-            return prev;
-        }, {});
-    }
-    return val.toString().replaceAll(";", "");
-}
-
-export function parseTextData(text: string, detectors = FormatDetectors): ParsedResult {
+export function parseTextData(text: string, detectors: Writeable<FormatDetectorsType[number]>[]) {
     const result: ParsedResult = {};
     const detectedFormats: string[] = [];
 
-    for (const {format, detector} of detectors) {
+    for (const { format, detector } of detectors) {
         if (detector.test(text)) {
             // console.log(format);
             detectedFormats.push(format);
@@ -416,17 +547,16 @@ export function parseTextData(text: string, detectors = FormatDetectors): Parsed
     }
 
     const formatsToUse = detectedFormats.length > 0 ? detectedFormats : Object.keys(formatParsers);
-
-    for (const format of formatsToUse) {
-        const parser = formatParsers[format as keyof typeof formatParsers];
-        const parsed = parser(text);
-
-
-        Object.assign(result, replaceAllSemicolon(parsed));
+    try {
+        for (const format of formatsToUse) {
+            const parser = formatParsers[format as keyof typeof formatParsers];
+            const parsed = parser(text);
+            Object.assign(result, parsed);
+        }
+    } catch (e) {
+        console.log(e);
     }
-
     processNestedStructures(result);
-
     return result;
 }
 

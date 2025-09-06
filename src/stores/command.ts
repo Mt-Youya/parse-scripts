@@ -1,11 +1,12 @@
 import { create } from "zustand"
 import { FormatDetectors, type FormatDetectorsType } from "@/constants/FormatDetectors"
+import type { Writeable } from "@/types/utils"
 
 export interface Dictionary {
     [p: string]: string | number
 }
 
-type DetectorsType = FormatDetectorsType[number] & { checked: boolean }
+type DetectorsType = Writeable<FormatDetectorsType>[number] & { checked: boolean }
 interface CommandState {
     baseCommand: string
     setBaseCommand: (baseCommand: string) => void
@@ -36,6 +37,6 @@ export const CommandStore = create<CommandState>((set) => ({
     targetFields: "cityId,mboxCouponId,spuId",
     setTargetFields: (targetFields: string) => set({ targetFields }),
 
-    detectors: FormatDetectors.map(item => ({ ...item, checked: true })),
+    detectors: FormatDetectors.map(item => ({ ...item,  checked: item.format === "properties" })),
     setDetectors: (detectors: DetectorsType[]) => set({ detectors }),
 }))

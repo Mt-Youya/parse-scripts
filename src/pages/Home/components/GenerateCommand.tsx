@@ -1,6 +1,6 @@
-import { Play, AlertCircle, CircleQuestionMark } from 'lucide-react';
+import { Play, AlertCircle } from 'lucide-react';
 import { CommandStore } from "@/stores/command";
-import {Alert, AlertDescription, AlertTitle} from "@/ui/alert";
+import { Alert, AlertDescription } from "@/ui/alert";
 import { Card, CardHeader, CardTitle, CardContent } from '@/ui/card';
 import { ServerStore } from '@/stores/server';
 import CopyComp from '@/layouts/CopyComp';
@@ -39,9 +39,6 @@ function GenerateCommand() {
 
                 {/* 命令解析 */}
                 <Alert className="bg-blue-50 border-blue-200">
-                <AlertTitle className="flex items-center text-lg -ml-8 mb-4">
-                    <CircleQuestionMark /> 若要修改基础命令,请在右上角设置修改
-                </AlertTitle>
                     <AlertCircle className="h-4 w-4 text-blue-600" />
                     <AlertDescription className="text-blue-800">
                         <ul className="space-y-2 text-sm">
@@ -50,7 +47,6 @@ function GenerateCommand() {
                             <li><strong>后缀:</strong> <code className="bg-blue-100 px-1 py-0.5 rounded">{commandSuffix}</code></li>
                         </ul>
                     </AlertDescription>
-
                 </Alert>
             </CardContent>
         </Card>

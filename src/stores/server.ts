@@ -1,9 +1,5 @@
 import { create } from "zustand"
 
-export interface Dictionary {
-    [p: string]: string | number
-}
-
 interface ServerStore {
     server: string,
     setServer: (server: string) => void,
