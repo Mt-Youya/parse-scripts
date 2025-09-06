@@ -65,7 +65,7 @@ function BOGO() {
                         href,
                         list: games.map((game: any) => ({
                             title: game.title,
-                            url: `https://www.epicgames.com/store/zh-CN/p/${game?.catalogNs?.mappings[0]?.pageSlug}`
+                            url: `https://www.epicgames.com/store/zh-CN/p/${game?.catalogNs?.mappings?.[0]?.pageSlug}`
                         }))
                     }
                 ]);
