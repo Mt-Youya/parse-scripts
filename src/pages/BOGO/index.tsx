@@ -57,7 +57,7 @@ function GameCard({ game, isFavorite, onToggleFavorite, onHide }) {
                     alt={game.title}
                     className="w-full h-48 object-cover rounded-t-lg"
                     onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/300x200/6b7280/ffffff?text=No+Image';
+                        e.target.src = '/assets/images/placeholder.png';
                     }}
                 />
                 <div className="absolute top-2 right-2 flex gap-2">
