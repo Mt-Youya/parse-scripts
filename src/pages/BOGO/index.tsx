@@ -162,7 +162,7 @@ function FreeGames() {
 
     const filteredGames = useMemo(() => {
         if (platform === 'all') return allGames;
-        return allGames.filter(game => game.platform?.toLowerCase() === platform);
+        return allGames.filter(game => game.platform === platform);
     }, [allGames, platform]);
 
     const filteredPlatforms = useMemo(() => ['all', ...new Set(allGames.map(game => game.platform))].filter(Boolean), [allGames]);
