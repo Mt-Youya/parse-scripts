@@ -66,8 +66,7 @@ function GameCard({ game, isFavorite, onToggleFavorite, onHide }) {
                         variant="secondary"
                         size="sm"
                         onClick={() => onToggleFavorite(game.id)}
-                        className={`opacity-0 group-hover:opacity-100 transition-opacity ${isFavorite ? 'text-red-500' : ''
-                            }`}
+                        className={`opacity-0 group-hover:opacity-100 transition-opacity ${isFavorite ? 'text-red-500' : ''}`}
                     >
                         <Heart className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} />
                     </Button>
@@ -92,8 +91,8 @@ function GameCard({ game, isFavorite, onToggleFavorite, onHide }) {
                 </p>
 
                 <div className="flex flex-wrap gap-2 mb-3 h-12">
-                    {game.genre && game.genre.split(',').map((g) => (
-                        <Badge variant="outline" className="text-xs h-fit">
+                    {game.genre && game.genre.split(',').map((g, idx) => (
+                        <Badge variant="outline" className="text-xs h-fit" key={idx}>
                             {g.trim()}
                         </Badge>
                     ))}
@@ -167,6 +166,8 @@ function FreeGames() {
 
     const filteredPlatforms = useMemo(() => ['all', ...new Set(allGames.map(game => game.platform))].filter(Boolean), [allGames]);
 
+    const [expanded, setExpanded] = useState(true)
+
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 md:p-8">
             <div className="max-w-7xl mx-auto">
@@ -232,7 +233,7 @@ function FreeGames() {
 
                 {activeTab === 'games' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                        <div className="col-span-full flex flex-wrap gap-2 mb-4">
+                        <div className={`col-span-full flex flex-wrap gap-2 mb-4 relative ${!expanded ? '' : 'max-h-10 overflow-hidden'}`}>
                             {filteredPlatforms.map((plat) => (
                                 plat && <Button
                                     key={plat}
@@ -243,6 +244,13 @@ function FreeGames() {
                                     {plat === 'all' ? '全部平台' : plat}
                                 </Button>
                             ))}
+                            <Button
+                                variant="outline"
+                                className="cursor-pointer p-2 absolute top-0 right-0 bg-gradient-to-t from-white dark:from-slate-800"
+                                onClick={() => setExpanded(!expanded)}
+                            >
+                                {!expanded ? '收起' : '展开'}
+                            </Button>
                         </div>
 
                         {filteredGames.length > 0 ? (
