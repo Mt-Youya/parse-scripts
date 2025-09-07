@@ -5,7 +5,7 @@ import { Button } from '@/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/ui/card';
 import { ExternalLink, Gamepad2, RefreshCw, Heart, EyeOff, Calendar, Star } from 'lucide-react';
 import { sortBy } from 'lodash-es';
-import imagePlaceholder from '/public/assets/images/image-placeholder.png?url'
+import imagePlaceholder from "/public/assets/images/image-placeholder.png?url";
 
 function useUserPreferences() {
     const [preferences, setPreferences] = useState({
@@ -41,12 +41,12 @@ function useUserPreferences() {
 
 // 游戏卡片组件
 function GameCard({ game, isFavorite, onToggleFavorite, onHide }) {
-    function formatDate(dateString) {
+    const formatDate = (dateString) => {
         if (!dateString) return '';
         return new Date(dateString).toLocaleDateString('zh-CN');
     };
 
-    function getImageSrc(src) {
+    const getImageSrc = (src) => {
         return src || imagePlaceholder;
     };
 
@@ -66,7 +66,8 @@ function GameCard({ game, isFavorite, onToggleFavorite, onHide }) {
                         variant="secondary"
                         size="sm"
                         onClick={() => onToggleFavorite(game.id)}
-                        className={`opacity-0 group-hover:opacity-100 transition-opacity ${isFavorite ? 'text-red-500' : ''}`}
+                        className={`opacity-0 group-hover:opacity-100 transition-opacity ${isFavorite ? 'text-red-500' : ''
+                            }`}
                     >
                         <Heart className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} />
                     </Button>
@@ -164,11 +165,10 @@ function FreeGames() {
         return allGames.filter(game => game.platform?.toLowerCase() === platform);
     }, [allGames, platform]);
 
-    const filteredPlatforms = useMemo(() => ['all', ...new Set(allGames.map(game => game.platform?.toLowerCase()))].filter(Boolean), [allGames]);
+    const filteredPlatforms = useMemo(() => ['all', ...new Set(allGames.map(game => game.platform))].filter(Boolean), [allGames]);
 
     return (
-        <div
-            className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 md:p-8">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 md:p-8">
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-8">
                     <div className="flex justify-center items-center gap-3 mb-4">
@@ -240,15 +240,15 @@ function FreeGames() {
                                     className="cursor-pointer p-2"
                                     onClick={() => setPlatform(plat)}
                                 >
-                                    {plat === 'all' ? '全部平台' : plat?.charAt(0).toUpperCase() + plat?.slice(1)}
+                                    {plat === 'all' ? '全部平台' : plat}
                                 </Button>
                             ))}
                         </div>
 
                         {filteredGames.length > 0 ? (
-                            filteredGames.map((game) => (
+                            filteredGames.map((game, idx) => (
                                 <GameCard
-                                    key={game.id}
+                                    key={idx + Math.random()}
                                     game={game}
                                     isFavorite={preferences.favoriteGames.includes(game.id)}
                                     onToggleFavorite={toggleFavoriteGame}
@@ -269,9 +269,9 @@ function FreeGames() {
                 {activeTab === 'favorites' && (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {favoriteGames.length > 0 ? (
-                            favoriteGames.map((game) => (
+                            favoriteGames.map((game, idx) => (
                                 <GameCard
-                                    key={game.id}
+                                    key={idx + Math.random()}
                                     game={game}
                                     isFavorite={true}
                                     onToggleFavorite={toggleFavoriteGame}
@@ -302,8 +302,7 @@ function FreeGames() {
                                 </CardHeader>
                                 <CardContent className="space-y-3">
                                     {list?.map(({ title, url }, idx) => (
-                                        <div key={idx}
-                                             className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors">
+                                        <div key={idx} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors">
                                             <div className="flex-1 min-w-0">
                                                 <h4 className="font-medium text-sm truncate">{title}</h4>
                                                 <p className="text-xs text-muted-foreground truncate">
