@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/ui/card';
 import { ExternalLink, Gamepad2, RefreshCw, Heart, EyeOff, Calendar, Star } from 'lucide-react';
 import { sortBy } from 'lodash-es';
 
-
 function useUserPreferences() {
     const [preferences, setPreferences] = useState({
         favoriteGames: [],
@@ -153,7 +152,6 @@ function FreeGames() {
         const games = sortBy([...data.epic, ...data.freetogame, ...data.steam], item => new Date(item.endDate));
         return games.filter(game => !preferences.hiddenGames.includes(game.id));
     }, [data, preferences.hiddenGames]);
-    console.log('allGames', allGames);
 
     const favoriteGames = useMemo(() => {
         return allGames.filter(game => preferences.favoriteGames.includes(game.id));
@@ -165,10 +163,8 @@ function FreeGames() {
         if (platform === 'all') return allGames;
         return allGames.filter(game => game.platform?.toLowerCase() === platform);
     }, [allGames, platform]);
-    
 
-    const filteredPlatforms = useMemo(() => ['all', ...new Set(allGames.map(game => game.platform?.toLowerCase()))], [allGames]);
-    console.log('filteredPlatforms', filteredPlatforms);
+    const filteredPlatforms = useMemo(() => ['all', ...new Set(allGames.map(game => game.platform?.toLowerCase()))].filter(Boolean), [allGames]);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 md:p-8">
@@ -237,13 +233,13 @@ function FreeGames() {
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         <div className="col-span-full flex flex-wrap gap-2 mb-4">
                             {filteredPlatforms.map((plat) => (
-                                <Button
+                                plat && <Button
                                     key={plat}
                                     variant={platform === plat ? 'default' : 'outline'}
                                     className="cursor-pointer p-2"
                                     onClick={() => setPlatform(plat)}
                                 >
-                                    {plat === 'all' ? '全部平台' : plat?.charAt(0).toUpperCase() + plat.slice(1)}
+                                    {plat === 'all' ? '全部平台' : plat?.charAt(0).toUpperCase() + plat?.slice(1)}
                                 </Button>
                             ))}
                         </div>
