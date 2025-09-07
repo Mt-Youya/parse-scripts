@@ -12,11 +12,11 @@ async function apiRequest(url, options = {}) {
 
   try {
     const response = await fetch(url, config);
-    
+
     if (!response.ok) {
       throw new Error(`API Error: ${response.status} ${response.statusText}`);
     }
-    
+
     return await response.json();
   } catch (error) {
     console.error('API Request failed:', error);
@@ -43,10 +43,10 @@ export async function fetchEpicGames(params = {}) {
   }
 
   const data = await apiRequest(apiUrl);
-  
+
   // 处理和过滤数据
   const games = data?.data?.Catalog?.searchStore?.elements ?? [];
-  
+
   return games
     .filter(game => {
       const price = game?.price?.totalPrice?.discountPrice ?? game?.price?.totalPrice?.originalPrice;
@@ -59,8 +59,8 @@ export async function fetchEpicGames(params = {}) {
       description: game.description,
       url: `https://www.epicgames.com/store/zh-CN/p/${game?.catalogNs?.mappings?.[0]?.pageSlug || game?.productSlug}`,
       platform: 'Epic Games',
-      image: game?.keyImages?.find(img => img.type === 'OfferImageWide')?.url || 
-             game?.keyImages?.find(img => img.type === 'Thumbnail')?.url || '',
+      image: game?.keyImages?.find(img => img.type === 'OfferImageWide')?.url ||
+        game?.keyImages?.find(img => img.type === 'Thumbnail')?.url || '',
       originalPrice: game?.price?.totalPrice?.originalPrice || 0,
       discountPrice: game?.price?.totalPrice?.discountPrice || 0,
       startDate: game?.promotions?.promotionalOffers?.[0]?.promotionalOffers?.[0]?.startDate,
@@ -106,8 +106,8 @@ export async function fetchFreeToGameList(params = {}) {
 
   try {
     const data = await apiRequest(apiUrl);
-    
-    return Array.isArray(data) ? data.map(game => ({
+    const result = Array.isArray(data) ? data : (data.aggregated || []);
+    return result.map(game => ({
       id: game.id,
       title: game.title,
       description: game.short_description,
@@ -117,7 +117,7 @@ export async function fetchFreeToGameList(params = {}) {
       genre: game.genre,
       releaseDate: game.release_date,
       developer: game.developer
-    })) : [];
+    }));
   } catch (error) {
     console.error('FreeToGame API failed:', error);
     return [];
@@ -137,10 +137,10 @@ export async function fetchGOGFreeGames() {
 
   try {
     const data = await apiRequest(apiUrl);
-    
+
     // 处理 GOG API 响应
     const games = data?.products || [];
-    
+
     return games.slice(0, 20).map(game => ({
       id: `gog-${game.id || Math.random()}`,
       title: game.title,
@@ -172,7 +172,7 @@ export async function fetchCheapSharkFreeGames() {
 
   try {
     const data = await apiRequest(apiUrl);
-    
+
     return Array.isArray(data) ? data.map(deal => ({
       id: `cheapshark-${deal.dealID}`,
       title: deal.title,
@@ -226,7 +226,7 @@ function parseSteamHTML(html) {
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const gameElements = doc.querySelectorAll('.search_result_row');
-    
+
     return Array.from(gameElements).slice(0, 20).map(element => ({
       id: element.dataset.dsAppid,
       title: element.querySelector('.title')?.textContent?.trim(),
