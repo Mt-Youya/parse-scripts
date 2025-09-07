@@ -138,7 +138,7 @@ async function getAggregatedFreeGames() {
     const response = await fetch('https://www.freetogame.com/api/games?platform=pc&sort-by=popularity');
     const data = await response.json();
     
-    return data?.slice(0, 20)?.map(game => ({
+    return data?.map(game => ({
       title: game.title,
       description: game.short_description,
       url: game.game_url,
