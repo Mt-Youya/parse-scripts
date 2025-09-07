@@ -25,7 +25,7 @@ function useUserPreferences() {
         });
     };
 
-    function hideGame (gameId) {
+    function hideGame(gameId) {
         setPreferences(prev => ({
             ...prev,
             hiddenGames: [...prev.hiddenGames, gameId]
@@ -153,6 +153,7 @@ function FreeGames() {
         const games = sortBy([...data.epic, ...data.freetogame, ...data.steam], item => new Date(item.endDate));
         return games.filter(game => !preferences.hiddenGames.includes(game.id));
     }, [data, preferences.hiddenGames]);
+    console.log('allGames', allGames);
 
     const favoriteGames = useMemo(() => {
         return allGames.filter(game => preferences.favoriteGames.includes(game.id));
@@ -164,8 +165,10 @@ function FreeGames() {
         if (platform === 'all') return allGames;
         return allGames.filter(game => game.platform?.toLowerCase() === platform);
     }, [allGames, platform]);
+    
 
     const filteredPlatforms = useMemo(() => ['all', ...new Set(allGames.map(game => game.platform?.toLowerCase()))], [allGames]);
+    console.log('filteredPlatforms', filteredPlatforms);
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 md:p-8">
@@ -240,7 +243,7 @@ function FreeGames() {
                                     className="cursor-pointer p-2"
                                     onClick={() => setPlatform(plat)}
                                 >
-                                    {plat === 'all' ? '全部平台' : plat.charAt(0).toUpperCase() + plat.slice(1)}
+                                    {plat === 'all' ? '全部平台' : plat?.charAt(0).toUpperCase() + plat.slice(1)}
                                 </Button>
                             ))}
                         </div>
