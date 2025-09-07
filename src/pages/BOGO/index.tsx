@@ -5,6 +5,7 @@ import { Button } from '@/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/ui/card';
 import { ExternalLink, Gamepad2, RefreshCw, Heart, EyeOff, Calendar, Star } from 'lucide-react';
 import { sortBy } from 'lodash-es';
+import imagePlaceholder from '/public/assets/images/image-placeholder.png?url'
 
 function useUserPreferences() {
     const [preferences, setPreferences] = useState({
@@ -40,13 +41,13 @@ function useUserPreferences() {
 
 // 游戏卡片组件
 function GameCard({ game, isFavorite, onToggleFavorite, onHide }) {
-    const formatDate = (dateString) => {
+    function formatDate(dateString) {
         if (!dateString) return '';
         return new Date(dateString).toLocaleDateString('zh-CN');
     };
 
-    const getImageSrc = (src) => {
-        return src || 'https://via.placeholder.com/300x200/6b7280/ffffff?text=No+Image';
+    function getImageSrc(src) {
+        return src || imagePlaceholder;
     };
 
     return (
@@ -57,7 +58,7 @@ function GameCard({ game, isFavorite, onToggleFavorite, onHide }) {
                     alt={game.title}
                     className="w-full h-48 object-cover rounded-t-lg"
                     onError={(e) => {
-                        e.target.src = '/assets/images/placeholder.png';
+                        e.target.src = imagePlaceholder;
                     }}
                 />
                 <div className="absolute top-2 right-2 flex gap-2">
@@ -65,8 +66,7 @@ function GameCard({ game, isFavorite, onToggleFavorite, onHide }) {
                         variant="secondary"
                         size="sm"
                         onClick={() => onToggleFavorite(game.id)}
-                        className={`opacity-0 group-hover:opacity-100 transition-opacity ${isFavorite ? 'text-red-500' : ''
-                            }`}
+                        className={`opacity-0 group-hover:opacity-100 transition-opacity ${isFavorite ? 'text-red-500' : ''}`}
                     >
                         <Heart className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} />
                     </Button>
@@ -167,7 +167,8 @@ function FreeGames() {
     const filteredPlatforms = useMemo(() => ['all', ...new Set(allGames.map(game => game.platform?.toLowerCase()))].filter(Boolean), [allGames]);
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 md:p-8">
+        <div
+            className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800 p-4 md:p-8">
             <div className="max-w-7xl mx-auto">
                 <div className="text-center mb-8">
                     <div className="flex justify-center items-center gap-3 mb-4">
@@ -301,7 +302,8 @@ function FreeGames() {
                                 </CardHeader>
                                 <CardContent className="space-y-3">
                                     {list?.map(({ title, url }, idx) => (
-                                        <div key={idx} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors">
+                                        <div key={idx}
+                                             className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors">
                                             <div className="flex-1 min-w-0">
                                                 <h4 className="font-medium text-sm truncate">{title}</h4>
                                                 <p className="text-xs text-muted-foreground truncate">
