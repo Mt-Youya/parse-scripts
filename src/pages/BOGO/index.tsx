@@ -149,7 +149,7 @@ function FreeGames() {
     const [activeTab, setActiveTab] = useState('games');
 
     const allGames = useMemo(() => {
-        const games = sortBy([...data.epic, ...data.freetogame, ...data.steam], item => new Date(item.endDate));
+        const games = sortBy(Object.keys(data).map(key => data[key]).flat(), item => new Date(item.endDate));
         return games.filter(game => !preferences.hiddenGames.includes(game.id));
     }, [data, preferences.hiddenGames]);
 
