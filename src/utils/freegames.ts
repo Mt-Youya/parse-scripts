@@ -101,8 +101,7 @@ export async function fetchFreeToGameList(params = {}) {
   if (IS_DEV) {
     apiUrl = `/api/freetogame/games?${searchParams.toString()}`;
   } else {
-    // 生产环境可能需要通过你的代理
-    apiUrl = `https://www.freetogame.com/api/games?${searchParams.toString()}`;
+    apiUrl = `/api/freetogame?${searchParams.toString()}`;
   }
 
   try {
