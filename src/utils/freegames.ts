@@ -82,7 +82,7 @@ export async function fetchSteamFreeGames() {
   try {
     const data = await apiRequest(apiUrl);
     // 处理 Steam 数据（数据结构可能不同）
-    return data?.results_html ? parseSteamHTML(data.results_html) : [];
+    return data?.results_html ? parseSteamHTML(data.results_html) : data.games;
   } catch (error) {
     console.error('Steam API failed:', error);
     return [];
