@@ -120,7 +120,7 @@ export async function fetchFreeToGameList(params = {}) {
       title: game.title,
       description: game.short_description,
       url: game.game_url || game.freetogame_profile_url,
-      platform: game.publisher,
+      platform: game.publisher || game.platform,
       image: game.thumbnail,
       genre: game.genre,
       releaseDate: game.release_date,
