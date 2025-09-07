@@ -53,13 +53,14 @@ async function getEpicGames() {
     const response = await fetch('https://store-site-backend-static-ipv4.ak.epicgames.com/freeGamesPromotions?locale=zh-CN&country=CN&allowCountries=CN');
     const data = await response.json();
     const games = data?.data?.Catalog?.searchStore?.elements ?? [];
-    
+
     return games
       .filter(game => {
         const price = game?.price?.totalPrice?.discountPrice ?? game?.price?.totalPrice?.originalPrice;
         return price === 0 && game?.promotions?.promotionalOffers?.length > 0;
       })
       .map(game => ({
+        id: game.id || game.gameId || game.gameid || game.gameID|| game.game_id,
         title: game.title,
         description: game.description,
         url: `https://www.epicgames.com/store/zh-CN/p/${game?.catalogNs?.mappings?.[0]?.pageSlug}`,
@@ -82,12 +83,13 @@ async function getSteamFreeGames() {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
       }
     });
-    
+
     if (!response.ok) throw new Error('Steam API failed');
-    
+
     const data = await response.json();
     // 处理 Steam 数据结构
     return data?.specials?.items?.slice(0, 10)?.map(game => ({
+      id: game.id || game.gameId || game.gameid || game.gameID|| game.game_id,
       title: game.name,
       description: game.header_image ? 'Steam 特惠游戏' : '',
       url: `https://store.steampowered.com/app/${game.id}/`,
@@ -113,11 +115,12 @@ async function getGOGFreeGames() {
         'X-Requested-With': 'XMLHttpRequest'
       }
     });
-    
+
     if (!response.ok) throw new Error('GOG API failed');
-    
+
     const data = await response.json();
     return data?.products?.slice(0, 10)?.map(game => ({
+      id: game.id || game.gameId || game.gameid || game.gameID|| game.game_id,
       title: game.title,
       description: game.genre || 'GOG 免费游戏',
       url: `https://www.gog.com${game.url}`,
@@ -137,8 +140,9 @@ async function getAggregatedFreeGames() {
     // 使用 FreeToGame API
     const response = await fetch('https://www.freetogame.com/api/games?platform=pc&sort-by=popularity');
     const data = await response.json();
-    
+
     return data?.map(game => ({
+      id: game.id || game.gameId || game.gameid || game.gameID|| game.game_id,
       title: game.title,
       description: game.short_description,
       url: game.game_url,
