@@ -118,12 +118,12 @@ export async function fetchFreeToGameList(params = {}) {
     return result.map(game => ({
       id: game.id,
       title: game.title,
-      description: game.short_description,
-      url: game.game_url || game.freetogame_profile_url,
+      description: game.short_description || game.description || '免费游戏',
+      url: game.game_url || game.freetogame_profile_url || game.url,
       platform: game.publisher || game.platform,
-      image: game.thumbnail,
+      image: game.thumbnail || game.image,
       genre: game.genre,
-      releaseDate: game.release_date,
+      releaseDate: game.release_date || game.releaseDate,
       developer: game.developer
     }));
   } catch (error) {
