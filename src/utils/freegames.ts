@@ -92,16 +92,16 @@ export async function fetchSteamFreeGames() {
 // 第三方免费游戏聚合 API
 export async function fetchFreeToGameList(params = {}) {
   const searchParams = new URLSearchParams({
-    platform: 'pc',
+    platform: 'aggregated',
     'sort-by': 'popularity',
-    ...params
+    ...params,
   });
 
   let apiUrl;
   if (IS_DEV) {
     apiUrl = `/api/freetogame/games?${searchParams.toString()}`;
   } else {
-    apiUrl = `/api/freetogame?${searchParams.toString()}`;
+    apiUrl = `/api/free-games?${searchParams.toString()}`;
   }
 
   try {
