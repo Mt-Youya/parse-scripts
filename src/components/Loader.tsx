@@ -5,17 +5,17 @@ interface LoaderProps {
     loading: boolean
 }
 function Loader({ children = "Loading...", loading = false }: PropsWithChildren & LoaderProps) {
-    const [spining, setspining] = useState(false)
+    const [spining, setSpining] = useState(false)
     const [visible, setVisible] = useState(false)
 
     useEffect(() => {
         if (loading) {
-            setspining(true);
+            setSpining(true);
             const timer = setTimeout(() => setVisible(true), 10);
             return () => clearTimeout(timer);
         }
         setVisible(false);
-        const timer = setTimeout(() => setspining(false), 500);
+        const timer = setTimeout(() => setSpining(false), 500);
         return () => clearTimeout(timer);
     }, [loading]);
 

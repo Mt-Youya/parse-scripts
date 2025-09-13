@@ -245,7 +245,7 @@ function parseJavaProperties(text: string) {
             .replace(/\\#/g, '#');
 
         // 移除行尾注释
-        value = value.replace(/\s*[#!].*$/, '');
+        value = value.replace(/\s*[#!].*$/, '').replaceAll(";", "");
 
         result[key] = parseValue(value);
     }
@@ -339,7 +339,7 @@ function parseENV(text: string) {
 }
 
 function parseLineHead(text: string) {
-    const lines = text.replace(/"val_lab":/,"").split('\n');
+    const lines = text.replace(/"val_lab":/, "").split('\n');
     const cleanString = lines.map(line => line.replace(/^\s*\d+\s*/, '')).join('\n');
     return parseJsonObject(cleanString);
 }

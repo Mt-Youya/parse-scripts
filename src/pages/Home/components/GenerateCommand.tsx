@@ -3,7 +3,7 @@ import { CommandStore } from "@/stores/command";
 import { Alert, AlertDescription } from "@/ui/alert";
 import { Card, CardHeader, CardTitle, CardContent } from '@/ui/card';
 import { ServerStore } from '@/stores/server';
-import CopyComp from '@/layouts/CopyComp';
+import CopyComp from '@/components/CopyComp';
 
 function GenerateCommand() {
     const { baseCommand, extractedData, commandSuffix } = CommandStore()

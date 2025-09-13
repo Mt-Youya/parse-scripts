@@ -9,9 +9,9 @@ interface ServerStore {
 }
 
 export const ServerStore = create<ServerStore>((set) => ({
-    server: "11.64.60.176",
+    server: "127.0.0.1",
     setServer: (server: string) => set({ server }),
 
-    port: 8081,
+    port: 3030,
     setPort: (port: number | string) => set({ port }),
 }))

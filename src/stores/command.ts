@@ -25,7 +25,7 @@ interface CommandState {
 }
 
 export const CommandStore = create<CommandState>((set) => ({
-    baseCommand: `hdc shell "aa start -U 'protocol://www.hostname.com/?server=http://`,
+    baseCommand: `hdc shell "aa start -U 'protocol://www.example.com/?server=http://`,
     setBaseCommand: (baseCommand: string) => set({ baseCommand }),
 
     commandSuffix: `'"`,
