@@ -34,7 +34,7 @@ async function apiRequest(...args: Parameters<typeof fetch>) {
   }
 }
 
-interface Game {
+export interface Game {
   id: string;
   title: string;
   description: string;
