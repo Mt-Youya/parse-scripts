@@ -3,10 +3,12 @@ import { Button, type ButtonProps } from "@/ui/button";
 import { CheckCircle } from "lucide-react";
 import useCopy from "@/hooks/useCopy";
 
-export default function CopyComp({ asChild = false, copyValue = "", text = "", ...props }: ButtonProps & {
-  copyValue: any;
-  text: React.ReactNode
-}) {
+export default function CopyComp({
+  asChild = false,
+  copyValue = "",
+  text = "",
+  ...props
+}: ButtonProps & { copyValue: any; text: React.ReactNode }) {
   const { status, copyToClipboard } = useCopy(copyValue);
 
   const Comp = asChild ? Slot : Button;
@@ -15,7 +17,7 @@ export default function CopyComp({ asChild = false, copyValue = "", text = "", .
     <Comp className="my-2" onClick={() => copyToClipboard(copyValue)} {...props}>
       {status ? (
         <>
-          <CheckCircle size={16}/>
+          <CheckCircle size={16} />
           已复制
         </>
       ) : (

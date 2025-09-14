@@ -73,9 +73,7 @@ export async function fetchEpicGames(params = {}) {
 
   return games
     .filter((game) => {
-      const price =
-        game?.price?.totalPrice?.discountPrice ??
-        game?.price?.totalPrice?.originalPrice;
+      const price = game?.price?.totalPrice?.discountPrice ?? game?.price?.totalPrice?.originalPrice;
       const hasPromotion = game?.promotions?.promotionalOffers?.length > 0;
       return price === 0 && hasPromotion;
     })
@@ -84,25 +82,17 @@ export async function fetchEpicGames(params = {}) {
       id: game.id || game.gameId,
       title: game.title,
       description: game.description,
-      url: `https://www.epicgames.com/store/zh-CN/p/${
-        game?.catalogNs?.mappings?.[0]?.pageSlug || game?.productSlug
-      }`,
+      url: `https://www.epicgames.com/store/zh-CN/p/${game?.catalogNs?.mappings?.[0]?.pageSlug || game?.productSlug}`,
       platform: "Epic Games",
       image:
-        game?.keyImages?.find((img: any) => img.type === "OfferImageWide")
-          ?.url ||
+        game?.keyImages?.find((img: any) => img.type === "OfferImageWide")?.url ||
         game?.keyImages?.find((img: any) => img.type === "Thumbnail")?.url ||
         "",
       originalPrice: game?.price?.totalPrice?.originalPrice || 0,
       discountPrice: game?.price?.totalPrice?.discountPrice || 0,
-      startDate:
-        game?.promotions?.promotionalOffers?.[0]?.promotionalOffers?.[0]
-          ?.startDate,
-      endDate:
-        game?.promotions?.promotionalOffers?.[0]?.promotionalOffers?.[0]
-          ?.endDate,
-      genre:
-        game?.categories?.map((cat: any) => cat.path)?.join(", ") || "未知",
+      startDate: game?.promotions?.promotionalOffers?.[0]?.promotionalOffers?.[0]?.startDate,
+      endDate: game?.promotions?.promotionalOffers?.[0]?.promotionalOffers?.[0]?.endDate,
+      genre: game?.categories?.map((cat: any) => cat.path)?.join(", ") || "未知",
       developer: game?.seller?.name || "未知",
     })) as Game[];
 }
@@ -111,8 +101,7 @@ export async function fetchEpicGames(params = {}) {
 export async function fetchSteamFreeGames() {
   let apiUrl;
   if (IS_DEV) {
-    apiUrl =
-      "/api/steam/search/results/?query=&start=0&count=50&dynamic_data=&sort_by=_ASC&tags=113&snr=1_7_7_popularnew_7&infinite=1";
+    apiUrl = "/api/steam/search/results/?query=&start=0&count=50&dynamic_data=&sort_by=_ASC&tags=113&snr=1_7_7_popularnew_7&infinite=1";
   } else {
     apiUrl = "/api/steam";
   }
@@ -181,8 +170,7 @@ export async function fetchGOGFreeGames() {
   let apiUrl;
   if (IS_DEV) {
     // 开发环境：使用 Vite 代理（需要配置 GOG 代理）
-    apiUrl =
-      "/api/gog/games/ajax/filtered?mediaType=game&price=free&sort=popularity&page=1";
+    apiUrl = "/api/gog/games/ajax/filtered?mediaType=game&price=free&sort=popularity&page=1";
   } else {
     // 生产环境：使用 Cloudflare Pages Functions
     apiUrl = "/api/gog";
@@ -201,9 +189,7 @@ export async function fetchGOGFreeGames() {
       description: game.genre || "GOG 免费游戏",
       url: `https://www.gog.com${game.url}`,
       platform: "GOG",
-      image: game.image
-        ? `https:${game.image}_product_card_v2_mobile_slider_639.jpg`
-        : "",
+      image: game.image ? `https:${game.image}_product_card_v2_mobile_slider_639.jpg` : "",
       originalPrice: game.price?.baseAmount || 0,
       discountPrice: game.price?.finalAmount || 0,
       genre: game.genre || "未知",
@@ -223,8 +209,7 @@ export async function fetchCheapSharkFreeGames() {
     apiUrl = "/api/cheapshark/deals?upperPrice=0&pageSize=20";
   } else {
     // 可能需要通过 Cloudflare Functions 代理
-    apiUrl =
-      "https://www.cheapshark.com/api/1.0/deals?upperPrice=0&pageSize=20";
+    apiUrl = "https://www.cheapshark.com/api/1.0/deals?upperPrice=0&pageSize=20";
   }
 
   try {
@@ -236,11 +221,8 @@ export async function fetchCheapSharkFreeGames() {
             ...game,
             id: game.dealID ? `cheapshark-${game.dealID}` : game.id,
             title: game.title,
-            description:
-              game.description || `原价 ${game.normalPrice}，限时免费`,
-            url: game.dealID
-              ? `https://www.cheapshark.com/redirect?dealID=${game.dealID}`
-              : game.url,
+            description: game.description || `原价 ${game.normalPrice}，限时免费`,
+            url: game.dealID ? `https://www.cheapshark.com/redirect?dealID=${game.dealID}` : game.url,
             platform: game.storeID === "1" ? "Steam" : "Other",
             image: game.thumb || game.image || "",
             originalPrice: parseFloat(game.normalPrice) || 0,
@@ -268,10 +250,10 @@ export async function fetchAllFreeGames() {
 
   return {
     epic: results[0].status === "fulfilled" ? results[0].value : [],
-    freetogame: results[1].status === "fulfilled" ? results[1].value : [],
-    gog: results[2].status === "fulfilled" ? results[2].value : [],
-    cheapshark: results[3].status === "fulfilled" ? results[3].value : [],
-    steam: results[4]?.status === "fulfilled" ? results[4].value : [],
+    freetogame: results[1]?.status === "fulfilled" ? results[1]?.value : [],
+    gog: results[2]?.status === "fulfilled" ? results[2]?.value : [],
+    cheapshark: results[3]?.status === "fulfilled" ? results[3]?.value : [],
+    steam: results[4]?.status === "fulfilled" ? results[4]?.value : [],
     errors: results
       .map((result, index) => ({ index, result }))
       .filter(({ result }) => result.status === "rejected")
@@ -299,15 +281,8 @@ function parseSteamHTML(html) {
         url: element.href || "",
         image: element.querySelector("img")?.src || "",
         platform: "Steam" || "",
-        description:
-          element
-            .querySelector(".search_review_summary")
-            ?.getAttribute("data-tooltip-html") ||
-          "免费游戏" ||
-          "",
-        releaseDate:
-          element.querySelector(".search_released")?.textContent?.trim() ||
-          "未知",
+        description: element.querySelector(".search_review_summary")?.getAttribute("data-tooltip-html") || "免费游戏" || "",
+        releaseDate: element.querySelector(".search_released")?.textContent?.trim() || "未知",
         genre: "未知",
         developer: "未知",
         originalPrice: 0,
