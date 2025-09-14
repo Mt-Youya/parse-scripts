@@ -30,3 +30,6 @@ pnpm-lock.yaml
 
 .vite-inspect
 tsconfig.tsbuildinfo
+
+# Caches file
+/.cache
