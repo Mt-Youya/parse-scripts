@@ -19,7 +19,7 @@ const defaultConf = defineConfig({
   ],
   server: {
     host: true, // 允许外部访问
-    port: 7585,
+    port: 5173,
   },
   resolve: {
     alias: {
