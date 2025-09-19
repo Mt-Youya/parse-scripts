@@ -7,10 +7,12 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+.vite-inspect
 node_modules
 dist
 dist-ssr
 *.local
+.cache
 
 # Editor directories and files
 .vscode/*
@@ -23,13 +25,4 @@ dist-ssr
 *.sln
 *.sw?
 
-# Lock files
-package-lock.json
-yarn.lock
 pnpm-lock.yaml
-
-.vite-inspect
-tsconfig.tsbuildinfo
-
-# Caches file
-/.cache

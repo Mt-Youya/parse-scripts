@@ -1,7 +1,7 @@
 // middleware/proxy-cache.js
-import fs from "fs";
-import path from "path";
-import crypto from "crypto";
+import fs from "node:fs";
+import path from "node:path";
+import crypto from "node:crypto";
 import { defineConfig } from "vite";
 import { brotliDecompress, gunzip } from "zlib";
 
@@ -18,6 +18,8 @@ export class ProxyCacheMiddleware {
     this.defaultTTL = options.defaultTTL || 30 * 60 * 1000; // 30分钟
     this.maxCacheSize = options.maxCacheSize || 500; // 最大缓存文件数
     this.enabledPatterns = options.enabledPatterns || []; // 启用缓存的路径模式
+
+    this.ensureCacheDir()
   }
 
   // 确保缓存目录存在
@@ -64,7 +66,7 @@ export class ProxyCacheMiddleware {
       // 删除损坏的缓存文件
       try {
         fs.unlinkSync(filePath);
-      } catch {}
+      } catch { }
       return null;
     }
   }

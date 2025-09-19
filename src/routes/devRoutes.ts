@@ -1,7 +1,9 @@
+import { IS_DEV } from "@/lib/envConf";
 
 export const devRoutes = [
   {
-    path: "/BOGO",
-    component: lazy(() => import("@/pages/BOGO"))
+    path: "/bogo",
+    component: lazy(() => import("@/pages/BOGO")),
+    redirect: !IS_DEV ? "/404" : undefined
   }
 ]
